@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   Bars3Icon,
@@ -12,6 +12,7 @@ import {
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useSidebar } from '@/contexts/SidebarContext'
 
 const navigation = [
   {
@@ -51,7 +52,7 @@ const navigation = [
 ]
 
 export function Sidebar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { isOpen, toggle, close } = useSidebar()
   const pathname = usePathname()
 
   const isActive = (href: string) => {
@@ -61,11 +62,11 @@ export function Sidebar() {
   return (
     <>
       {/* Menu móvel overlay */}
-      <Transition.Root show={sidebarOpen} as={Fragment}>
+      <Transition.Root show={isOpen} as={Fragment}>
         <Dialog 
           as="div" 
           className="fixed inset-0 z-50 lg:hidden" 
-          onClose={setSidebarOpen}
+          onClose={close}
         >
           {/* Fundo escuro */}
           <Transition.Child
@@ -94,9 +95,9 @@ export function Sidebar() {
               <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-4 sm:px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center justify-between">
-                    <h1 className="text-lg sm:text-xl font-semibold text-indigo-600">MusicoCare</h1>
+                    <h1 className="text-lg sm:text-xl font-semibold text-indigo-600">MuseTera</h1>
                     <button 
-                      onClick={() => setSidebarOpen(false)}
+                      onClick={close}
                       className="text-gray-500 hover:text-gray-700"
                     >
                       <XMarkIcon className="h-6 w-6" />
@@ -115,7 +116,7 @@ export function Sidebar() {
                                   : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
                                 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                               )}
-                              onClick={() => setSidebarOpen(false)}
+                              onClick={close}
                             >
                               <item.icon
                                 className={cn(
@@ -149,7 +150,7 @@ export function Sidebar() {
                                         : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
                                       'block rounded-md py-1 sm:py-2 pr-2 pl-6 sm:pl-9 text-xs sm:text-sm leading-6'
                                     )}
-                                    onClick={() => setSidebarOpen(false)}
+                                    onClick={close}
                                   >
                                     {child.name}
                                   </Link>
@@ -169,89 +170,106 @@ export function Sidebar() {
       </Transition.Root>
 
       {/* Barra de navegação móvel */}
-      <div className="sticky top-0 z-40 flex items-center gap-x-4 bg-white px-4 py-3 shadow-sm sm:px-6 lg:hidden">
+      <div className="sticky top-0 z-40 flex items-center gap-x-4 bg-white px-4 py-3 shadow-sm sm:px-6">
         <button
           type="button"
-          className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-          onClick={() => setSidebarOpen(true)}
+          className="-m-2.5 p-2.5 text-gray-700"
+          onClick={toggle}
         >
           <span className="sr-only">Abrir menu</span>
           <Bars3Icon className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
         </button>
         <div className="flex-1 text-xs sm:text-sm font-semibold leading-6 text-gray-900">
-          MusicoCare
+          MuseTera
         </div>
       </div>
 
       {/* Sidebar desktop */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 xl:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-4 xl:px-6 pb-4">
-          <div className="flex h-16 shrink-0 items-center">
-            <h1 className="text-lg xl:text-xl font-semibold text-indigo-600">MusicoCare</h1>
-          </div>
-          <nav className="flex flex-1 flex-col">
-            <ul role="list" className="flex flex-1 flex-col gap-y-5 xl:gap-y-7">
-              <li>
-                <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => (
-                    <li key={item.name}>
-                      {item.href ? (
-                        <Link
-                          href={item.href}
-                          className={cn(
-                            isActive(item.href)
-                              ? 'bg-gray-50 text-indigo-600'
-                              : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                            'group flex gap-x-3 rounded-md p-2 text-xs xl:text-sm leading-6 font-semibold'
-                          )}
-                        >
-                          <item.icon
+      <Transition
+        show={isOpen}
+        as={Fragment}
+        enter="transition-all ease-in-out duration-300"
+        enterFrom="-translate-x-full opacity-0"
+        enterTo="translate-x-0 opacity-100"
+        leave="transition-all ease-in-out duration-300"
+        leaveFrom="translate-x-0 opacity-100"
+        leaveTo="-translate-x-full opacity-0"
+      >
+        <div className="fixed inset-y-0 z-50 flex w-64 xl:w-72 flex-col">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-4 xl:px-6 pb-4">
+            <div className="flex h-16 shrink-0 items-center justify-between">
+              <h1 className="text-lg xl:text-xl font-semibold text-indigo-600">MuseTera</h1>
+              <button 
+                onClick={close}
+                className="text-gray-500 hover:text-gray-700 lg:hidden"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            <nav className="flex flex-1 flex-col">
+              <ul role="list" className="flex flex-1 flex-col gap-y-5 xl:gap-y-7">
+                <li>
+                  <ul role="list" className="-mx-2 space-y-1">
+                    {navigation.map((item) => (
+                      <li key={item.name}>
+                        {item.href ? (
+                          <Link
+                            href={item.href}
                             className={cn(
                               isActive(item.href)
-                                ? 'text-indigo-600'
-                                : 'text-gray-400 group-hover:text-indigo-600',
-                              'h-5 w-5 xl:h-6 xl:w-6 shrink-0'
+                                ? 'bg-gray-50 text-indigo-600'
+                                : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
+                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                             )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
-                      ) : (
-                        <div className="group flex gap-x-3 rounded-md p-2 text-xs xl:text-sm leading-6 font-semibold text-gray-700">
-                          <item.icon
-                            className="h-5 w-5 xl:h-6 xl:w-6 shrink-0 text-gray-400"
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </div>
-                      )}
-                      {item.children && (
-                        <ul className="mt-1 ml-6 xl:ml-8 space-y-1">
-                          {item.children.map((child) => (
-                            <li key={child.name}>
-                              <Link
-                                href={child.href}
-                                className={cn(
-                                  isActive(child.href)
-                                    ? 'bg-gray-50 text-indigo-600'
-                                    : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                                  'block rounded-md py-1 xl:py-2 pr-2 pl-6 xl:pl-9 text-xs xl:text-sm leading-6'
-                                )}
-                              >
-                                {child.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            </ul>
-          </nav>
+                          >
+                            <item.icon
+                              className={cn(
+                                isActive(item.href)
+                                  ? 'text-indigo-600'
+                                  : 'text-gray-400 group-hover:text-indigo-600',
+                                'h-6 w-6 shrink-0'
+                              )}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </Link>
+                        ) : (
+                          <div className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700">
+                            <item.icon
+                              className="h-6 w-6 shrink-0 text-gray-400"
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </div>
+                        )}
+                        {item.children && (
+                          <ul className="mt-1 px-2">
+                            {item.children.map((child) => (
+                              <li key={child.name}>
+                                <Link
+                                  href={child.href}
+                                  className={cn(
+                                    isActive(child.href)
+                                      ? 'bg-gray-50 text-indigo-600'
+                                      : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
+                                    'block rounded-md py-2 pr-2 pl-9 text-sm leading-6'
+                                  )}
+                                >
+                                  {child.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
-      </div>
+      </Transition>
     </>
   )
 }
