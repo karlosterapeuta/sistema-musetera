@@ -13,72 +13,70 @@ const authOptions: AuthOptions = {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-          select: {
-            id: true,
-            email: true,
-            password: true,
-            professionalRegister: true
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error('Credenciais inválidas')
           }
-        })
 
-        if (!user?.password) return null
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+            select: {
+              id: true,
+              email: true,
+              password: true,
+              professionalRegister: true
+            }
+          })
 
-        const isValid = await bcrypt.compare(credentials.password, user.password)
-        if (!isValid) return null
+          if (!user || !user.password) {
+            throw new Error('Usuário não encontrado')
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          professionalRegister: user.professionalRegister
+          const isValid = await bcrypt.compare(credentials.password, user.password)
+          if (!isValid) {
+            throw new Error('Senha incorreta')
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            professionalRegister: user.professionalRegister
+          }
+        } catch (error) {
+          console.error('Erro na autenticação:', error)
+          return null
         }
       }
     })
   ],
   pages: {
-    signIn: '/auth'
+    signIn: '/auth',
+    error: '/auth'
   },
   session: {
     strategy: 'jwt',
     maxAge: 8 * 60 * 60 // 8 hours
   },
-  cookies: {
-    sessionToken: {
-      name: 'next-auth.session-token',
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production'
-      }
-    }
-  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.email = user.email
         token.professionalRegister = user.professionalRegister
-        delete token.name
-        delete token.picture
       }
       return token
     },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string
-        session.user.professionalRegister = token.professionalRegister as string
-        delete session.user.name
-        delete session.user.image
+      if (token) {
+        session.user.id = token.id
+        session.user.email = token.email
+        session.user.professionalRegister = token.professionalRegister
       }
       return session
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
   trustHost: true
 }
 
