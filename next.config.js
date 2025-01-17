@@ -1,20 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['react-big-calendar', 'moment'],
-  experimental: {
-    esmExternals: 'loose'
+  images: {
+    domains: ['jztbkimlcrfndooyhohg.supabase.co'],
+    unoptimized: true,
   },
   typescript: {
-    // Apenas para produção, não recomendado para desenvolvimento
     ignoreBuildErrors: true
   },
   eslint: {
-    // Apenas para produção, não recomendado para desenvolvimento
     ignoreDuringBuilds: true
   },
-  output: 'standalone',
-  poweredByHeader: false,
-  compress: true
+  experimental: {
+    serverActions: true,
+  },
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+    };
+    return config;
+  },
 }
 
 module.exports = nextConfig
