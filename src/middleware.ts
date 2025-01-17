@@ -16,13 +16,8 @@ export default withAuth(
     }
 
     if (!isAuth) {
-      let from = req.nextUrl.pathname
-      if (req.nextUrl.search) {
-        from += req.nextUrl.search
-      }
-
       return NextResponse.redirect(
-        new URL(`/auth?from=${encodeURIComponent(from)}`, req.url)
+        new URL('/auth', req.url)
       )
     }
   },
