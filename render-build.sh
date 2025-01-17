@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# exit on error
+set -o errexit
 
 # Exibir versões
 echo "Node version: $(node -v)"
@@ -11,7 +13,7 @@ rm -rf node_modules/.cache
 
 # Instalar dependências
 echo "Instalando dependências..."
-npm ci
+npm install
 
 # Gerar Prisma Client
 echo "Gerando Prisma Client..."
