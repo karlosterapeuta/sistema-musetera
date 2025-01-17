@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { PatientList } from '@/components/PatientList'
+import PatientList from '@/components/PatientList'
 
 export default function PatientsPage() {
   const [isLoading, setIsLoading] = useState(true)
