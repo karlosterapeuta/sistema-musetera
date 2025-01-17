@@ -1,35 +1,34 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['react-big-calendar', 'jspdf', 'html2canvas'],
+  experimental: {
+    esmExternals: true
+  },
   images: {
     domains: ['jztbkimlcrfndooyhohg.supabase.co'],
     unoptimized: true,
   },
-  transpilePackages: ['react-big-calendar', 'jspdf', 'html2canvas'],
   typescript: {
     ignoreBuildErrors: true
   },
   eslint: {
     ignoreDuringBuilds: true
   },
-  experimental: {
-    esmExternals: true
-  },
   output: 'standalone',
   poweredByHeader: false,
-  compress: true,
   webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': './src'
+    }
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
       canvas: false,
       encoding: false
-    };
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': './src'
     }
-    return config;
-  },
+    return config
+  }
 }
 
 module.exports = nextConfig
