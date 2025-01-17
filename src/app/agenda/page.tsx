@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Card } from '@/components/ui/Card'
-import { AgendamentoModal } from '@/components/agenda/AgendamentoModal'
-import { useAgendamentos } from '@/hooks/useAgendamentos'
-import { Agendamento } from '@/types/agenda'
+import { Card } from '../../components/ui/Card'
+import { AgendamentoModal } from '../../components/agenda/AgendamentoModal'
+import { useAgendamentos } from '../../hooks/useAgendamentos'
+import { Agendamento } from '../../types/agenda'
 
 const Calendario = dynamic(
-  () => import('@/components/agenda/Calendario').then(mod => mod.Calendario),
+  () => import('../../components/agenda/Calendario').then(mod => mod.Calendario),
   { ssr: false }
 )
 
