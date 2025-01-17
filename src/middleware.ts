@@ -6,6 +6,11 @@ export default withAuth(
     const isAuth = !!req.nextauth.token
     const path = req.nextUrl.pathname
 
+    // Limitar o tamanho da URL
+    if (req.nextUrl.toString().length > 2000) {
+      return new NextResponse('URI Too Long', { status: 414 })
+    }
+
     if (path.startsWith('/auth') || path.startsWith('/cadastro')) {
       return isAuth 
         ? NextResponse.redirect(new URL('/dashboard', req.url), {
