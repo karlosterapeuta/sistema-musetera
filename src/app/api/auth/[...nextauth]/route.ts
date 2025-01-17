@@ -62,7 +62,7 @@ const authOptions: AuthOptions = {
     signIn: '/auth',
     error: '/auth'
   },
-  debug: true,
+  debug: false,
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60 // 30 dias
