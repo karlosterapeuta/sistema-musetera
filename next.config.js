@@ -4,7 +4,7 @@ const nextConfig = {
     domains: ['jztbkimlcrfndooyhohg.supabase.co'],
     unoptimized: true,
   },
-  transpilePackages: ['react-big-calendar'],
+  transpilePackages: ['react-big-calendar', 'jspdf', 'html2canvas'],
   typescript: {
     ignoreBuildErrors: true
   },
@@ -21,6 +21,8 @@ const nextConfig = {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
+      canvas: false,
+      encoding: false
     };
     config.resolve.alias = {
       ...config.resolve.alias,
