@@ -10,7 +10,10 @@
     "postinstall": "prisma generate",
     "seed": "node prisma/seed.js",
     "clean": "rm -rf .next node_modules/.cache",
-    "prod-start": "next start -p $PORT"
+    "prod-start": "next start -p $PORT",
+    "netlify-build": "./netlify-build.sh",
+    "netlify-dev": "netlify dev",
+    "netlify-deploy": "netlify deploy --prod"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -42,6 +45,7 @@
     "style-loader": "^4.0.0"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.9.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.46",
