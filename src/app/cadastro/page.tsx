@@ -6,11 +6,14 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/Card'
 import { SignUpData } from '@/types/auth'
 import { FiUser, FiMail, FiLock, FiAlertCircle, FiCreditCard } from 'react-icons/fi'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 export default function CadastroPage() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,6 +26,14 @@ export default function CadastroPage() {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
     setError(null)
+  }
+
+  const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
+    if (field === 'password') {
+      setShowPassword(!showPassword)
+    } else {
+      setShowConfirmPassword(!showConfirmPassword)
+    }
   }
 
   const validateForm = () => {
@@ -145,13 +156,24 @@ export default function CadastroPage() {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="pl-10 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 ease-in-out"
+                  className="pl-10 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 ease-in-out pr-10"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility('password')}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                  )}
+                </button>
               </div>
               <p className="mt-1 text-xs text-gray-500">Mínimo de 6 caracteres</p>
             </div>
@@ -167,13 +189,24 @@ export default function CadastroPage() {
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="pl-10 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 ease-in-out"
+                  className="pl-10 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 ease-in-out pr-10"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility('confirmPassword')}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                >
+                  {showConfirmPassword ? (
+                    <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                  )}
+                </button>
               </div>
             </div>
 
