@@ -2,7 +2,8 @@
 const nextConfig = {
   transpilePackages: ['react-big-calendar', 'jspdf', 'html2canvas'],
   experimental: {
-    esmExternals: true
+    esmExternals: true,
+    serverActions: true
   },
   images: {
     domains: ['jztbkimlcrfndooyhohg.supabase.co'],
