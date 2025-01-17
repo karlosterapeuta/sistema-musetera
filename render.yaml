@@ -13,15 +13,6 @@ services:
         value: production
       - key: PORT
         value: 3000
-      - key: NODE_OPTIONS
-        value: --max-http-header-size=16384
-    headers:
-      - path: /*
-        name: Cache-Control
-        value: no-store, must-revalidate
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
     healthCheckPath: /api/health
     autoDeploy: true
     buildFilter:

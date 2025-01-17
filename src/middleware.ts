@@ -6,13 +6,7 @@ export default withAuth(
     const isAuth = !!req.nextauth.token
     const path = req.nextUrl.pathname
 
-    // Se estiver na página de login e autenticado, vai para dashboard
-    if (path === '/auth' && isAuth) {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
-    }
-
-    // Se não estiver autenticado e tentar acessar uma rota protegida, vai para login
-    if (!isAuth && path !== '/auth') {
+    if (!isAuth && !path.startsWith('/auth')) {
       return NextResponse.redirect(new URL('/auth', req.url))
     }
 
@@ -29,7 +23,6 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/patients/:path*',
-    '/auth',
     '/relatorios/:path*'
   ]
 }

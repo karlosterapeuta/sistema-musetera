@@ -3,7 +3,7 @@ const nextConfig = {
   transpilePackages: ['react-big-calendar', 'jspdf', 'html2canvas'],
   experimental: {
     esmExternals: true,
-    largePageDataBytes: 128 * 100000, // Aumentando o limite para dados grandes
+    largePageDataBytes: 128 * 100000,
   },
   images: {
     domains: ['jztbkimlcrfndooyhohg.supabase.co'],
@@ -30,34 +30,7 @@ const nextConfig = {
       encoding: false
     }
     return config
-  },
-  headers: async () => [
-    {
-      source: '/:path*',
-      headers: [
-        {
-          key: 'X-DNS-Prefetch-Control',
-          value: 'on'
-        },
-        {
-          key: 'Strict-Transport-Security',
-          value: 'max-age=63072000'
-        },
-        {
-          key: 'X-Frame-Options',
-          value: 'DENY',
-        },
-        {
-          key: 'X-Content-Type-Options',
-          value: 'nosniff',
-        },
-        {
-          key: 'Referrer-Policy',
-          value: 'origin-when-cross-origin',
-        },
-      ]
-    }
-  ]
+  }
 }
 
 module.exports = nextConfig
