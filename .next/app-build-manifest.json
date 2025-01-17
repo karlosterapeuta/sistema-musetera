@@ -6,65 +6,71 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/relatorios/page": [
+    "/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/relatorios/page.js"
-    ],
-    "/relatorios/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/relatorios/layout.js"
-    ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/dashboard/page.js"
     ],
     "/processos/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/processos/page.js"
     ],
-    "/relatorios/novo/page": [
+    "/auth/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/relatorios/novo/page.js"
+      "static/css/app/auth/layout.css",
+      "static/chunks/app/auth/layout.js"
     ],
-    "/relatorios/lista/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/relatorios/lista/page.js"
+      "static/chunks/app/page.js"
     ],
-    "/processos/plano/page": [
+    "/auth/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/processos/plano/page.js"
-    ],
-    "/processos/intervencoes/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/processos/intervencoes/page.js"
-    ],
-    "/processos/anamnese/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/processos/anamnese/page.js"
+      "static/chunks/app/auth/page.js"
     ],
     "/processos/avaliacao/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/processos/avaliacao/page.js"
     ],
-    "/processos/reavaliacao/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/processos/reavaliacao/page.js"
-    ],
     "/pacientes/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/pacientes/page.js"
+    ],
+    "/pacientes/novo/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/pacientes/novo/page.js"
+    ],
+    "/relatorios/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/relatorios/layout.js"
+    ],
+    "/relatorios/novo/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/relatorios/novo/page.js"
+    ],
+    "/relatorios/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/relatorios/page.js"
+    ],
+    "/processos/anamnese/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/processos/anamnese/page.js"
+    ],
+    "/not-found": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/not-found.js"
     ]
   }
 }

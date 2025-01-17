@@ -9,64 +9,71 @@ import Link from 'next/link'
 import { AnamneseQuestion, ANAMNESE_QUESTIONS } from '@/types/anamnese'
 import { AnamnesePDF } from '@/components/processos/AnamnesePDF'
 import { useAnamneses } from '@/hooks/useAnamneses'
+import { Logo } from '@/components/Logo'
 
 export default function AnamnesePage() {
   const router = useRouter()
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
 
   return (
-    <div className="max-w-4xl mx-auto py-6">
-      <Card>
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Anamnese Musicoterapêutica</h1>
-          
-          <div className="space-y-6">
-            <div>
-              <div className="flex items-end gap-4">
-                <div className="flex-1">
-                  <PatientSelect
-                    onSelect={setSelectedPatient}
-                    selectedId={selectedPatient?.id}
-                  />
-                </div>
-                <Link
-                  href="/pacientes/novo"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Novo Paciente
-                </Link>
-              </div>
-            </div>
-
-            {selectedPatient && (
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Anamnese de {selectedPatient.name}
-                </h2>
-                <AnamneseForm patient={selectedPatient} />
-              </div>
-            )}
-
-            {!selectedPatient && (
-              <div className="text-center py-6 text-gray-500">
-                Selecione um paciente ou cadastre um novo para iniciar a anamnese musicoterapêutica
-              </div>
-            )}
-          </div>
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-6">
+          <Logo size="sm" />
         </div>
-      </Card>
+
+        <Card>
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-6">Anamnese Musicoterapêutica</h1>
+            
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-end gap-4">
+                  <div className="flex-1">
+                    <PatientSelect
+                      onSelect={setSelectedPatient}
+                      selectedId={selectedPatient?.id}
+                    />
+                  </div>
+                  <Link
+                    href="/pacientes/novo"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Novo Paciente
+                  </Link>
+                </div>
+              </div>
+
+              {selectedPatient && (
+                <div className="mt-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Anamnese de {selectedPatient.name}
+                  </h2>
+                  <AnamneseForm patient={selectedPatient} />
+                </div>
+              )}
+
+              {!selectedPatient && (
+                <div className="text-center py-6 text-gray-500">
+                  Selecione um paciente ou cadastre um novo para iniciar a anamnese musicoterapêutica
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   )
 }

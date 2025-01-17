@@ -1,115 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Card } from '@/components/ui/Card'
 import { PatientSelect } from '@/components/processos/PatientSelect'
 import { Patient } from '@/types'
 import { formatarData } from '@/utils/formatters'
 import { ClipboardDocumentCheckIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline'
 import jsPDF from 'jspdf'
-
-const ESCALA_DEMUCA = [
-  {
-    categoria: 'Comportamentos restritivos',
-    parametros: [
-      'Estereotipias',
-      'Agressividade',
-      'Desinteresse',
-      'Passividade',
-      'Resistência',
-      'Reclusão (isolamento)',
-      'Pirraça'
-    ],
-    escala: {
-      nao: 2,
-      pouco: 1,
-      muito: 0
-    }
-  },
-  {
-    categoria: 'Interação social / Cognição',
-    parametros: [
-      'Contato visual',
-      'Comunicação verbal',
-      'Interação com instrumentos musicais',
-      'Interação com outros objetos',
-      'Interação com educador ou musicoterapeuta',
-      'Interação com pais (se aplicável)',
-      'Interação com pares (se aplicável)',
-      'Atenção',
-      'Imitação'
-    ],
-    escala: {
-      nao: 0,
-      pouco: 1,
-      muito: 2
-    }
-  },
-  {
-    categoria: 'Percepção / Exploração rítmica',
-    parametros: [
-      'Pulso interno',
-      'Regulação temporal',
-      { nome: 'Apoio', multiplicador: 2 },
-      { nome: 'Ritmo real', multiplicador: 2 },
-      { nome: 'Contrastes de andamento', multiplicador: 2 }
-    ],
-    escala: {
-      nao: 0,
-      pouco: 1,
-      muito: 2
-    }
-  },
-  {
-    categoria: 'Percepção / Exploração sonora',
-    parametros: [
-      'Som/silêncio',
-      'Timbre',
-      'Planos de altura',
-      'Movimento sonoro',
-      'Contrastes de intensidade',
-      'Repetição de ideias rítmicas e/ou melódicas',
-      'Senso de conclusão'
-    ],
-    escala: {
-      nao: 0,
-      pouco: 1,
-      muito: 2
-    }
-  },
-  {
-    categoria: 'Exploração vocal',
-    parametros: [
-      'Vocalizações',
-      'Balbucios',
-      'Sílabas canônica',
-      { nome: 'Imitação de canções', multiplicador: 2 },
-      { nome: 'Criação vocal', multiplicador: 2 }
-    ],
-    escala: {
-      nao: 0,
-      pouco: 1,
-      muito: 2
-    }
-  },
-  {
-    categoria: 'Movimentação corporal com a música',
-    parametros: [
-      'Andar',
-      'Correr',
-      'Parar',
-      'Dançar',
-      'Pular',
-      'Gesticular',
-      'Movimentar-se no lugar'
-    ],
-    escala: {
-      nao: 0,
-      pouco: 1,
-      muito: 2
-    }
-  }
-]
+import { ResultadosGraficos } from '@/components/processos/ResultadosGraficos'
+import { ESCALA_DEMUCA } from '@/data/escalaDemuca'
+import html2canvas from 'html2canvas'
+import { Logo } from '@/components/Logo'
 
 const calcularPontuacao = (categoria: typeof ESCALA_DEMUCA[0], avaliacoes: Record<string, string>) => {
   let total = 0
@@ -135,11 +36,171 @@ const calcularPontuacao = (categoria: typeof ESCALA_DEMUCA[0], avaliacoes: Recor
   return total
 }
 
+const calcularPorcentagens = (avaliacoes: Record<string, string>) => {
+  const habilidades = []
+  const categorias = []
+
+  ESCALA_DEMUCA.forEach(categoria => {
+    const pontuacao = calcularPontuacao(categoria, avaliacoes)
+    const totalPontos = categoria.escala.nao + categoria.escala.pouco + categoria.escala.muito
+    const porcentagem = (pontuacao / totalPontos) * 100
+
+    categorias.push({ name: categoria.categoria, value: porcentagem.toFixed(2) })
+
+    categoria.parametros.forEach(parametro => {
+      const nome = typeof parametro === 'string' ? parametro : parametro.nome
+      const valor = avaliacoes[nome] || 'Não avaliado'
+      const pontos = valor === 'nao' ? categoria.escala.nao : valor === 'pouco' ? categoria.escala.pouco : categoria.escala.muito
+      const porcentagem = (pontos / totalPontos) * 100
+
+      habilidades.push({ name: nome, value: porcentagem.toFixed(2) })
+    })
+  })
+
+  return { habilidades, categorias }
+}
+
 export default function AvaliacaoPage() {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [avaliacoes, setAvaliacoes] = useState<Record<string, string>>({})
-  const [avaliacaoAtual, setAvaliacaoAtual] = useState('1')
   const [observacoes, setObservacoes] = useState('')
+  const pieChartRef = useRef<HTMLDivElement>(null)
+  const barChartRef = useRef<HTMLDivElement>(null)
+
+  const gerarPDF = async () => {
+    if (!selectedPatient) return
+
+    const doc = new jsPDF()
+    
+    // Função auxiliar para adicionar retângulo com cor de fundo
+    const addColoredRect = (y: number, height: number, color: string) => {
+      doc.setFillColor(color)
+      doc.rect(0, y, doc.internal.pageSize.getWidth(), height, 'F')
+    }
+
+    // Adiciona a logo
+    try {
+      const logoPath = '/logo-musicoterapia.png'
+      const response = await fetch(logoPath)
+      const blob = await response.blob()
+      const reader = new FileReader()
+      
+      await new Promise((resolve) => {
+        reader.onload = () => {
+          if (reader.result) {
+            doc.addImage(reader.result as string, 'PNG', 10, 10, 20, 20)
+          }
+          resolve(null)
+        }
+        reader.readAsDataURL(blob)
+      })
+    } catch (error) {
+      console.error('Erro ao carregar a logo:', error)
+    }
+
+    // Cabeçalho
+    addColoredRect(0, 40, '#f3f4f6')
+    doc.setFontSize(24)
+    doc.setTextColor('#1f2937')
+    doc.text('ESCALA PARA AVALIAÇÃO TEA', 105, 25, { align: 'center' })
+    
+    let yPos = 50
+
+    // Informações do paciente
+    doc.setFillColor('#ffffff')
+    doc.setDrawColor('#e5e7eb')
+    doc.roundedRect(10, yPos, doc.internal.pageSize.getWidth() - 20, 40, 3, 3, 'FD')
+    
+    doc.setFontSize(12)
+    doc.setTextColor('#374151')
+    yPos += 15
+    doc.text(`Paciente: ${selectedPatient.nome}`, 20, yPos)
+    yPos += 10
+    doc.text(`Data de Nascimento: ${formatarData(selectedPatient.dataNascimento)}`, 20, yPos)
+    doc.text(`Data da Avaliação: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.getWidth() - 20, yPos, { align: 'right' })
+    
+    yPos += 25
+
+    // Resultados da avaliação
+    doc.setFontSize(16)
+    doc.setTextColor('#1f2937')
+    doc.text('Resultados da Avaliação', 105, yPos, { align: 'center' })
+    
+    yPos += 15
+
+    // Adiciona os resultados de cada categoria
+    ESCALA_DEMUCA.forEach((categoria, index) => {
+      // Adiciona fundo alternado para cada categoria
+      const isEven = index % 2 === 0
+      addColoredRect(yPos - 5, 25, isEven ? '#f9fafb' : '#ffffff')
+
+      doc.setFontSize(14)
+      doc.setTextColor('#1f2937')
+      doc.text(categoria.categoria, 20, yPos)
+      
+      yPos += 10
+      doc.setFontSize(10)
+      doc.setTextColor('#4b5563')
+
+      categoria.parametros.forEach(parametro => {
+        const nome = typeof parametro === 'string' ? parametro : parametro.nome
+        const multiplicador = typeof parametro === 'string' ? '' : ' (2x)'
+        const valor = avaliacoes[nome] || 'Não avaliado'
+
+        // Cria uma caixa para cada resposta
+        const text = `${nome}${multiplicador}: ${valor}`
+        doc.setDrawColor('#e5e7eb')
+        doc.setFillColor('#ffffff')
+        doc.roundedRect(30, yPos - 4, 150, 8, 1, 1, 'FD')
+        doc.text(text, 35, yPos)
+
+        yPos += 10
+
+        // Adiciona nova página se necessário
+        if (yPos > doc.internal.pageSize.getHeight() - 20) {
+          doc.addPage()
+          yPos = 20
+        }
+      })
+      yPos += 5
+    })
+
+    // Nova página para os gráficos
+    doc.addPage()
+    yPos = 20
+
+    // Título da página de gráficos
+    addColoredRect(0, 40, '#f3f4f6')
+    doc.setFontSize(20)
+    doc.setTextColor('#1f2937')
+    doc.text('Visualização Gráfica dos Resultados', 105, 25, { align: 'center' })
+
+    // Captura e adiciona o gráfico de pizza
+    if (pieChartRef.current) {
+      const pieCanvas = await html2canvas(pieChartRef.current)
+      const pieImgData = pieCanvas.toDataURL('image/png')
+      doc.addImage(pieImgData, 'PNG', 20, 50, 170, 100)
+    }
+
+    // Captura e adiciona o gráfico de barras
+    if (barChartRef.current) {
+      const barCanvas = await html2canvas(barChartRef.current)
+      const barImgData = barCanvas.toDataURL('image/png')
+      doc.addImage(barImgData, 'PNG', 20, 160, 170, 100)
+    }
+
+    // Rodapé
+    const yPosAssinatura = doc.internal.pageSize.getHeight() - 40
+    addColoredRect(yPosAssinatura, 40, '#f3f4f6')
+    doc.setFontSize(10)
+    doc.setTextColor('#4b5563')
+    doc.text('_'.repeat(50), 20, yPosAssinatura + 15)
+    doc.text('Assinatura do Profissional', 20, yPosAssinatura + 25)
+    doc.text(new Date().toLocaleDateString(), doc.internal.pageSize.getWidth() - 20, yPosAssinatura + 25, { align: 'right' })
+
+    // Salva o PDF
+    doc.save(`avaliacao_${selectedPatient.nome}_${new Date().toISOString().split('T')[0]}.pdf`)
+  }
 
   const handleAvaliacaoChange = (parametro: string, valor: string) => {
     setAvaliacoes(prev => ({
@@ -148,109 +209,20 @@ export default function AvaliacaoPage() {
     }))
   }
 
-  const handleDownloadPDF = () => {
-    if (!selectedPatient) return
-
-    const doc = new jsPDF()
-    let yPos = 20
-
-    // Configurações de fonte e tamanho
-    doc.setFont('helvetica')
-    
-    // Título
-    doc.setFontSize(18)
-    doc.text('Avaliação DEMUCA', doc.internal.pageSize.getWidth() / 2, yPos, { align: 'center' })
-    yPos += 15
-
-    // Data e identificação
-    doc.setFontSize(10)
-    doc.text(new Date().toLocaleDateString('pt-BR'), doc.internal.pageSize.getWidth() - 20, yPos, { align: 'right' })
-    doc.text('MuseTera', doc.internal.pageSize.getWidth() - 20, yPos + 5, { align: 'right' })
-    yPos += 20
-
-    // Dados do Paciente
-    doc.setFontSize(14)
-    doc.text('Dados do Paciente', 20, yPos)
-    yPos += 10
-
-    doc.setFontSize(12)
-    doc.text(`Nome: ${selectedPatient?.name || 'Não informado'}`, 20, yPos)
-    yPos += 7
-    doc.text(`Data de Nascimento: ${selectedPatient?.dateOfBirth ? new Date(selectedPatient.dateOfBirth).toLocaleDateString('pt-BR') : 'Não informado'}`, 20, yPos)
-    yPos += 7
-    doc.text(`Contato: ${selectedPatient?.contactInfo?.phone || 'Não informado'}`, 20, yPos)
-    yPos += 15
-
-    // Avaliação DEMUCA
-    ESCALA_DEMUCA.forEach(categoria => {
-      // Verifica se precisa adicionar nova página
-      if (yPos > doc.internal.pageSize.getHeight() - 40) {
-        doc.addPage()
-        yPos = 20
-      }
-
-      // Título da categoria
-      doc.setFontSize(14)
-      const pontuacao = calcularPontuacao(categoria, avaliacoes)
-      doc.text(`${categoria.categoria} - Pontuação: ${pontuacao}`, 20, yPos)
-      yPos += 10
-
-      // Parâmetros
-      doc.setFontSize(12)
-      categoria.parametros.forEach(parametro => {
-        const nome = typeof parametro === 'string' ? parametro : parametro.nome
-        const multiplicador = typeof parametro === 'string' ? '' : ` (x${parametro.multiplicador})`
-        const valor = avaliacoes[nome] || 'Não avaliado'
-
-        // Verifica se precisa adicionar nova página
-        if (yPos > doc.internal.pageSize.getHeight() - 20) {
-          doc.addPage()
-          yPos = 20
-        }
-
-        doc.text(`${nome}${multiplicador}: ${valor}`, 20, yPos)
-        yPos += 7
-      })
-      yPos += 10
-    })
-
-    // Observações
-    if (observacoes) {
-      if (yPos > doc.internal.pageSize.getHeight() - 40) {
-        doc.addPage()
-        yPos = 20
-      }
-
-      doc.setFontSize(14)
-      doc.text('Observações', 20, yPos)
-      yPos += 10
-
-      doc.setFontSize(12)
-      const linhas = doc.splitTextToSize(observacoes, doc.internal.pageSize.getWidth() - 40)
-      linhas.forEach((linha: string) => {
-        if (yPos > doc.internal.pageSize.getHeight() - 20) {
-          doc.addPage()
-          yPos = 20
-        }
-        doc.text(linha, 20, yPos)
-        yPos += 7
-      })
-    }
-
-    // Salva o PDF
-    doc.save(`avaliacao_demuca_${avaliacaoAtual}_${selectedPatient.name.toLowerCase().replace(/\s+/g, '_')}.pdf`)
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Avaliação DEMUCA
-          </h1>
-          <p className="mt-2 text-base text-gray-600">
-            Escala de Desenvolvimento Musical de Crianças com Autismo
-          </p>
+        <div className="flex justify-between items-center mb-6">
+          <Logo />
+          <div className="flex gap-4">
+            <button
+              onClick={gerarPDF}
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            >
+              <DocumentArrowDownIcon className="w-5 h-5" />
+              Gerar PDF
+            </button>
+          </div>
         </div>
 
         <Card>
@@ -274,8 +246,8 @@ export default function AvaliacaoPage() {
                   </label>
                   <div className="relative">
                     <select
-                      value={avaliacaoAtual}
-                      onChange={(e) => setAvaliacaoAtual(e.target.value)}
+                      value={'1'}
+                      onChange={(e) => {}}
                       className="block w-full rounded-lg border-gray-300 py-2.5 pl-3 pr-10 text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                     >
                       <option value="1">Avaliação 1</option>
@@ -294,15 +266,15 @@ export default function AvaliacaoPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                       <div>
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                          {selectedPatient.name}
+                          {selectedPatient.nome}
                         </h3>
                         <p className="mt-1 text-xs sm:text-sm text-gray-600">
-                          Data de Nascimento: {formatarData(selectedPatient.dateOfBirth)}
+                          Data de Nascimento: {formatarData(selectedPatient.dataNascimento)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 bg-indigo-50 px-2 sm:px-3 py-1.5 rounded-lg">
                         <ClipboardDocumentCheckIcon className="h-4 sm:h-5 w-4 sm:w-5 text-indigo-600" />
-                        <span className="text-xs sm:text-sm font-medium text-indigo-700">Avaliação {avaliacaoAtual}</span>
+                        <span className="text-xs sm:text-sm font-medium text-indigo-700">Avaliação 1</span>
                       </div>
                     </div>
                   </div>
@@ -413,7 +385,7 @@ export default function AvaliacaoPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={handleDownloadPDF}
+                      onClick={gerarPDF}
                       className="w-full sm:w-auto inline-flex items-center justify-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-150"
                     >
                       <DocumentArrowDownIcon className="h-4 sm:h-5 w-4 sm:w-5 mr-2" />
@@ -426,9 +398,7 @@ export default function AvaliacaoPage() {
           </div>
         </Card>
       </div>
-      {selectedPatient && Object.keys(avaliacoes).length > 0 && (
-        <div />
-      )}
+      {selectedPatient && <ResultadosGraficos avaliacoes={avaliacoes} pieChartRef={pieChartRef} barChartRef={barChartRef}/>}
     </div>
   )
 }

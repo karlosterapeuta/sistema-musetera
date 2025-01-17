@@ -5,6 +5,7 @@ import { CheckCircleIcon, BeakerIcon } from '@heroicons/react/24/solid'
 import jsPDF from 'jspdf'
 import { PatientSelect } from '@/components/processos/PatientSelect'
 import { Patient } from '@/types'
+import { Logo } from '@/components/Logo'
 
 interface Intervencao {
   categoria: string
@@ -299,107 +300,115 @@ export default function IntervencoesPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-6 px-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Planejamento de Intervenções Musicoterapêuticas</h1>
-      </div>
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-6">
+          <Logo size="sm" />
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nome do Paciente
-            </label>
-            <div className="mt-1">
-              <PatientSelect
-                onSelect={setSelectedPatient}
-                selectedId={selectedPatient?.id}
+        <div className="max-w-4xl mx-auto py-6 px-4">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">Planejamento de Intervenções Musicoterapêuticas</h1>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Nome do Paciente
+                </label>
+                <div className="mt-1">
+                  <PatientSelect
+                    onSelect={setSelectedPatient}
+                    selectedId={selectedPatient?.id}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Data
+                </label>
+                <input
+                  type="date"
+                  value={data}
+                  onChange={(e) => setData(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+            </div>
+
+            {intervencoesPredefinidas.map((intervencao) => (
+              <div key={intervencao.categoria} className="bg-white p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <BeakerIcon className="h-6 w-6 text-indigo-500 mr-2" />
+                  {intervencao.categoria}
+                </h2>
+
+                <div className="mb-4">
+                  <h3 className="text-lg font-medium text-gray-700 mb-2">Atividades</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {intervencao.atividades.map((atividade) => (
+                      <label
+                        key={atividade}
+                        className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={intervencoesSelecionadas[intervencao.categoria]?.atividades.includes(atividade)}
+                          onChange={() => toggleAtividade(intervencao.categoria, atividade)}
+                          className="rounded text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span>{atividade}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-medium text-gray-700 mb-2">Objetivos</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {intervencao.objetivos.map((objetivo) => (
+                      <label
+                        key={objetivo}
+                        className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={intervencoesSelecionadas[intervencao.categoria]?.objetivos.includes(objetivo)}
+                          onChange={() => toggleObjetivo(intervencao.categoria, objetivo)}
+                          className="rounded text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span>{objetivo}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-medium text-gray-700 mb-2">Observações Adicionais</h3>
+              <textarea
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                className="w-full h-32 p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Adicione observações específicas sobre as intervenções..."
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Data
-            </label>
-            <input
-              type="date"
-              value={data}
-              onChange={(e) => setData(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
-          </div>
-        </div>
-
-        {intervencoesPredefinidas.map((intervencao) => (
-          <div key={intervencao.categoria} className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-              <BeakerIcon className="h-6 w-6 text-indigo-500 mr-2" />
-              {intervencao.categoria}
-            </h2>
-
-            <div className="mb-4">
-              <h3 className="text-lg font-medium text-gray-700 mb-2">Atividades</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {intervencao.atividades.map((atividade) => (
-                  <label
-                    key={atividade}
-                    className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={intervencoesSelecionadas[intervencao.categoria]?.atividades.includes(atividade)}
-                      onChange={() => toggleAtividade(intervencao.categoria, atividade)}
-                      className="rounded text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <span>{atividade}</span>
-                  </label>
-                ))}
-              </div>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <CheckCircleIcon className="h-5 w-5 mr-2" />
+                Baixar PDF
+              </button>
             </div>
-
-            <div>
-              <h3 className="text-lg font-medium text-gray-700 mb-2">Objetivos</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {intervencao.objetivos.map((objetivo) => (
-                  <label
-                    key={objetivo}
-                    className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={intervencoesSelecionadas[intervencao.categoria]?.objetivos.includes(objetivo)}
-                      onChange={() => toggleObjetivo(intervencao.categoria, objetivo)}
-                      className="rounded text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <span>{objetivo}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-medium text-gray-700 mb-2">Observações Adicionais</h3>
-          <textarea
-            value={observacoes}
-            onChange={(e) => setObservacoes(e.target.value)}
-            className="w-full h-32 p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Adicione observações específicas sobre as intervenções..."
-          />
+          </form>
         </div>
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <CheckCircleIcon className="h-5 w-5 mr-2" />
-            Baixar PDF
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   )
 }

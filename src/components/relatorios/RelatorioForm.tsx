@@ -23,92 +23,170 @@ const TIPOS_RELATORIO = [
 const CAMPOS_ESPECIFICOS = {
   sessao: [
     {
-      titulo: 'Dados da Sessão',
+      titulo: 'Dados da Sessão Terapêutica',
       campos: [
         { id: 'data', label: 'Data', tipo: 'date' },
         { id: 'horario', label: 'Horário', tipo: 'time' },
         { id: 'numeroSessao', label: 'Número da Sessão', tipo: 'number' },
+        { id: 'duracao', label: 'Duração (minutos)', tipo: 'number' },
+        { id: 'setting', label: 'Setting Terapêutico', tipo: 'select',
+          opcoes: [
+            'Consultório',
+            'Domiciliar',
+            'Institucional',
+            'Ambiente Virtual',
+            'Outro'
+          ]
+        }
+      ]
+    },
+    {
+      titulo: 'Planejamento Terapêutico',
+      campos: [
         { 
           id: 'objetivosSessao', 
-          label: 'Objetivos da Sessão', 
+          label: 'Objetivos Específicos da Sessão', 
           tipo: 'multiselect',
           opcoes: [
-            'Desenvolver habilidades de comunicação verbal',
-            'Estimular interação social',
-            'Trabalhar expressão emocional',
-            'Desenvolver habilidades motoras',
-            'Melhorar atenção e concentração',
-            'Estimular memória musical',
-            'Desenvolver ritmo e coordenação',
-            'Trabalhar autorregulação'
+            'Desenvolvimento de habilidades pragmáticas da comunicação',
+            'Promoção da interação social recíproca',
+            'Facilitação da expressão e regulação emocional',
+            'Desenvolvimento psicomotor integrado',
+            'Estimulação das funções executivas',
+            'Desenvolvimento da percepção e processamento auditivo',
+            'Integração sensorial através de estímulos sonoro-musicais',
+            'Desenvolvimento de estratégias de autorregulação'
           ]
         }
       ]
     },
     {
-      titulo: 'Atividades Realizadas',
+      titulo: 'Descrição das Intervenções Musicoterapêuticas',
       campos: [
         {
-          id: 'atividadesPrincipais',
-          label: 'Atividades',
+          id: 'metodologiasAplicadas',
+          label: 'Metodologias Aplicadas',
           tipo: 'multiselect',
           opcoes: [
-            'Aquecimento vocal e corporal',
-            'Improvisação com instrumentos',
-            'Recriação de canções',
-            'Composição musical',
-            'Audição musical dirigida',
-            'Jogos musicais rítmicos',
-            'Relaxamento com música',
-            'Expressão corporal com música'
+            'Improvisação Clínica (Modelo Nordoff-Robbins)',
+            'Re-criação Musical Terapêutica',
+            'Composição Musical Direcionada',
+            'Audição Musical Receptiva (GIM adaptado)',
+            'Técnicas de Musicoterapia Neurológica (NMT)',
+            'Método STAM (Sons e Transcendência)',
+            'Técnicas de ISO e Entrainment',
+            'Abordagem Plurimodal em Musicoterapia'
           ]
         },
         {
-          id: 'respostasAtividades',
-          label: 'Respostas às Atividades',
+          id: 'instrumentosUtilizados',
+          label: 'Recursos Sonoro-Musicais',
           tipo: 'multiselect',
           opcoes: [
-            'Demonstrou interesse e engajamento',
-            'Participou ativamente das propostas',
-            'Manteve boa interação',
-            'Apresentou iniciativa musical',
-            'Seguiu comandos e orientações',
-            'Manteve atenção nas atividades',
-            'Demonstrou prazer musical',
-            'Necessitou mediação constante'
+            'Instrumentos de Percussão (especificar)',
+            'Instrumentos Melódicos (especificar)',
+            'Instrumentos Harmônicos (especificar)',
+            'Recursos Tecnológicos/DAW',
+            'Voz e Corpo',
+            'Material Sonoro Gravado',
+            'Instrumentos Adaptados',
+            'Recursos Auxiliares'
           ]
+        },
+        {
+          id: 'descricaoIntervencoes',
+          label: 'Descrição Detalhada das Intervenções',
+          tipo: 'textarea',
+          placeholder: 'Descreva a sequência e desenvolvimento das intervenções realizadas, incluindo adaptações necessárias e progressão das atividades.'
         }
       ]
     },
     {
-      titulo: 'Aspectos Comportamentais',
+      titulo: 'Resposta do Paciente',
       campos: [
         {
-          id: 'comportamentosSociais',
-          label: 'Comportamentos Sociais',
+          id: 'respostaMusical',
+          label: 'Resposta Musical',
           tipo: 'multiselect',
           opcoes: [
-            'Manteve contato visual adequado',
-            'Demonstrou reciprocidade social',
-            'Iniciou interações espontaneamente',
-            'Respondeu adequadamente a comandos',
-            'Compartilhou interesses e atenção',
-            'Demonstrou empatia e afeto',
-            'Respeitou turnos de interação'
+            'Demonstrou engajamento musical ativo',
+            'Apresentou iniciativas sonoro-musicais',
+            'Manteve sincronia rítmica',
+            'Explorou variações melódicas',
+            'Respondeu a mudanças dinâmicas',
+            'Demonstrou preferências musicais',
+            'Estabeleceu diálogo sonoro-musical',
+            'Apresentou expressividade musical'
           ]
         },
         {
-          id: 'comunicacao',
-          label: 'Comunicação',
+          id: 'respostaComportamental',
+          label: 'Aspectos Comportamentais',
           tipo: 'multiselect',
           opcoes: [
-            'Utilizou comunicação verbal adequada',
-            'Expressou necessidades e desejos',
-            'Manteve diálogo musical',
-            'Utilizou gestos comunicativos',
-            'Demonstrou compreensão de comandos',
-            'Apresentou vocalizações intencionais'
+            'Manteve engajamento nas propostas terapêuticas',
+            'Demonstrou regulação sensorial adequada',
+            'Apresentou reciprocidade socioemocional',
+            'Manteve atenção sustentada',
+            'Demonstrou compreensão das consignas',
+            'Apresentou comportamento colaborativo',
+            'Manifestou adequação postural',
+            'Demonstrou autorregulação emocional'
           ]
+        },
+        {
+          id: 'descricaoRespostas',
+          label: 'Análise das Respostas',
+          tipo: 'textarea',
+          placeholder: 'Descreva detalhadamente as respostas observadas, incluindo padrões comportamentais, mudanças significativas e aspectos relevantes da interação terapêutica.'
+        }
+      ]
+    },
+    {
+      titulo: 'Avaliação Técnica',
+      campos: [
+        {
+          id: 'avaliacaoObjetivos',
+          label: 'Análise dos Objetivos',
+          tipo: 'multiselect',
+          opcoes: [
+            'Objetivos totalmente alcançados',
+            'Objetivos parcialmente alcançados',
+            'Objetivos em desenvolvimento',
+            'Necessidade de reformulação',
+            'Identificação de novos objetivos',
+            'Manutenção do planejamento atual'
+          ]
+        },
+        {
+          id: 'avaliacaoTecnica',
+          label: 'Parecer Técnico',
+          tipo: 'textarea',
+          placeholder: 'Apresente sua análise técnica sobre a eficácia das intervenções, progressos observados e fundamentação teórica pertinente.'
+        }
+      ]
+    },
+    {
+      titulo: 'Planejamento Futuro',
+      campos: [
+        {
+          id: 'planejamentoFuturo',
+          label: 'Direcionamentos Terapêuticos',
+          tipo: 'multiselect',
+          opcoes: [
+            'Manutenção das estratégias atuais',
+            'Adaptação das intervenções',
+            'Introdução de novas técnicas',
+            'Ajuste dos objetivos terapêuticos',
+            'Necessidade de avaliação específica',
+            'Indicação para abordagem interdisciplinar'
+          ]
+        },
+        {
+          id: 'observacoesAdicionais',
+          label: 'Observações Complementares',
+          tipo: 'textarea',
+          placeholder: 'Registre informações adicionais relevantes, intercorrências ou observações específicas que contribuam para o processo terapêutico.'
         }
       ]
     }
@@ -116,53 +194,53 @@ const CAMPOS_ESPECIFICOS = {
 
   evolucao_mensal: [
     {
-      titulo: 'Evolução por Áreas',
+      titulo: 'Análise da Evolução Terapêutica',
       campos: [
         {
           id: 'evolucaoMusical',
-          label: 'Evolução Musical',
+          label: 'Desenvolvimento Sonoro-Musical',
           tipo: 'multiselect',
           opcoes: [
-            'Melhorou percepção rítmica',
-            'Desenvolveu expressão vocal',
-            'Ampliou repertório musical',
-            'Explorou novos instrumentos',
-            'Demonstrou criatividade musical',
-            'Melhorou coordenação motora',
-            'Desenvolveu habilidades de improvisação'
+            'Aprimoramento da percepção e discriminação rítmica',
+            'Desenvolvimento da expressão vocal e melódica',
+            'Expansão do repertório sonoro-musical',
+            'Ampliação do engajamento instrumental',
+            'Desenvolvimento da criatividade e expressão musical',
+            'Aprimoramento da coordenação neuromotora',
+            'Desenvolvimento das habilidades de improvisação clínica'
           ]
         },
         {
           id: 'evolucaoComportamental',
-          label: 'Evolução Comportamental',
+          label: 'Desenvolvimento Comportamental',
           tipo: 'multiselect',
           opcoes: [
-            'Redução de comportamentos inadequados',
-            'Melhor regulação emocional',
-            'Maior tolerância à frustração',
-            'Aumento do tempo de atenção',
-            'Melhor organização comportamental',
-            'Maior flexibilidade',
-            'Redução da ansiedade'
+            'Redução significativa de comportamentos disfuncionais',
+            'Aprimoramento da regulação emocional',
+            'Aumento do limiar de tolerância à frustração',
+            'Ampliação do período de sustentação da atenção',
+            'Melhora na organização e planejamento comportamental',
+            'Desenvolvimento da flexibilidade cognitiva',
+            'Redução dos níveis de ansiedade'
           ]
         }
       ]
     },
     {
-      titulo: 'Objetivos Alcançados',
+      titulo: 'Avaliação dos Objetivos Terapêuticos',
       campos: [
         {
           id: 'objetivosAlcancados',
-          label: 'Objetivos',
+          label: 'Objetivos Alcançados',
           tipo: 'multiselect',
           opcoes: [
-            'Melhora na comunicação verbal',
-            'Aumento da interação social',
-            'Desenvolvimento de habilidades musicais',
-            'Melhor expressão emocional',
-            'Aumento da autonomia',
-            'Desenvolvimento motor',
-            'Melhor autorregulação'
+            'Desenvolvimento significativo da comunicação pragmática',
+            'Ampliação das habilidades sociointeracionais',
+            'Desenvolvimento das competências musicais terapêuticas',
+            'Aprimoramento da expressão e regulação emocional',
+            'Desenvolvimento da autonomia funcional',
+            'Evolução do desenvolvimento neuropsicomotor',
+            'Estabelecimento de estratégias de autorregulação'
           ]
         }
       ]
@@ -171,37 +249,37 @@ const CAMPOS_ESPECIFICOS = {
 
   alta: [
     {
-      titulo: 'Motivos da Alta',
+      titulo: 'Critérios de Alta Terapêutica',
       campos: [
         {
           id: 'motivosAlta',
-          label: 'Motivos',
+          label: 'Justificativa Clínica',
           tipo: 'multiselect',
           opcoes: [
-            'Alcance dos objetivos terapêuticos',
-            'Desenvolvimento adequado das habilidades-alvo',
-            'Estabilização do quadro comportamental',
-            'Autonomia nas atividades propostas',
-            'Generalização das habilidades',
-            'Indicação para outras modalidades'
+            'Consecução dos objetivos terapêuticos estabelecidos',
+            'Desenvolvimento satisfatório das habilidades-alvo',
+            'Estabilização do quadro comportamental e emocional',
+            'Desenvolvimento da autonomia nas intervenções propostas',
+            'Generalização das habilidades adquiridas',
+            'Indicação para outras modalidades terapêuticas complementares'
           ]
         }
       ]
     },
     {
-      titulo: 'Recomendações',
+      titulo: 'Orientações Terapêuticas',
       campos: [
         {
           id: 'recomendacoes',
-          label: 'Recomendações',
+          label: 'Recomendações Técnicas',
           tipo: 'multiselect',
           opcoes: [
-            'Manter atividades musicais em casa',
-            'Continuar estimulação musical',
-            'Participar de atividades musicais em grupo',
-            'Manter acompanhamento multidisciplinar',
-            'Reavaliação em 6 meses',
-            'Encaminhamento para outras terapias'
+            'Manutenção das atividades musicoterapêuticas em ambiente domiciliar',
+            'Continuidade da estimulação sonoro-musical',
+            'Participação em atividades musicais socializantes',
+            'Acompanhamento periódico para monitoramento',
+            'Integração com outras abordagens terapêuticas',
+            'Manutenção do suporte familiar nas atividades propostas'
           ]
         }
       ]

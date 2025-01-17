@@ -28,8 +28,9 @@ export function PatientSelect({ onSelect, selectedId, disabled, className = '' }
       </label>
       <select
         value={selectedId || ''}
-        onChange={(e) => {
-          const patient = patients.find(p => p.id === e.target.value)
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+          const selectedValue = e.target.value
+          const patient = selectedValue ? patients.find(p => p.id === selectedValue) : null
           onSelect(patient || null)
         }}
         disabled={disabled}

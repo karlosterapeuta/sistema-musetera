@@ -10,25 +10,25 @@ export const ANAMNESE_QUESTIONS: AnamneseQuestion[] = [
   // Dados Pessoais e Familiares
   {
     id: 'responsavel',
-    question: 'Nome do Responsável',
+    question: 'Responsável Legal',
     type: 'text',
     category: 'dados_pessoais'
   },
   {
     id: 'parentesco',
-    question: 'Parentesco',
+    question: 'Vínculo Familiar',
     type: 'text',
     category: 'dados_pessoais'
   },
   {
     id: 'encaminhamento',
-    question: 'Encaminhado por',
+    question: 'Profissional/Instituição Encaminhadora',
     type: 'text',
     category: 'dados_pessoais'
   },
   {
     id: 'queixa_principal',
-    question: 'Queixa Principal',
+    question: 'Demanda Clínica Principal',
     type: 'text',
     category: 'dados_pessoais'
   },
@@ -36,58 +36,58 @@ export const ANAMNESE_QUESTIONS: AnamneseQuestion[] = [
   // História Musical
   {
     id: 'experiencia_musical',
-    question: 'Experiência Musical Prévia',
+    question: 'Histórico de Experiências Musicais',
     type: 'multiple',
     options: [
-      'Aulas de música',
-      'Canta em casa',
-      'Toca instrumento',
-      'Participa de coral',
-      'Dança',
-      'Nenhuma experiência prévia'
+      'Educação Musical Formal',
+      'Expressão Vocal Espontânea',
+      'Prática Instrumental',
+      'Participação em Atividades Corais',
+      'Expressão Corporal-Musical',
+      'Sem Experiência Musical Prévia'
     ],
     category: 'historia_musical'
   },
   {
     id: 'musica_em_casa',
-    question: 'Relação com Música em Casa',
+    question: 'Comportamento Musical no Ambiente Domiciliar',
     type: 'multiple',
     options: [
-      'Ouve música frequentemente',
-      'Canta espontaneamente',
-      'Dança ao ouvir música',
-      'Toca instrumentos',
-      'Demonstra interesse por sons',
-      'Reage negativamente a sons/músicas'
+      'Escuta Musical Ativa',
+      'Expressão Vocal Espontânea',
+      'Expressão Corporal-Musical',
+      'Exploração Instrumental',
+      'Responsividade a Estímulos Sonoros',
+      'Reatividade Sonora Adversa'
     ],
     category: 'historia_musical'
   },
   {
     id: 'preferencias_musicais',
-    question: 'Preferências Musicais',
+    question: 'Preferências e Identidade Musical',
     type: 'multiple',
     options: [
-      'Músicas infantis',
-      'MPB',
-      'Rock',
-      'Sertanejo',
-      'Gospel',
-      'Clássica',
-      'Outros gêneros'
+      'Repertório Infantil',
+      'Música Popular Brasileira',
+      'Gênero Rock',
+      'Música Sertaneja',
+      'Música Sacra/Gospel',
+      'Música Erudita',
+      'Outros Gêneros Musicais'
     ],
     category: 'preferencias_musicais'
   },
   {
     id: 'reacoes_sonoras',
-    question: 'Reações a Estímulos Sonoros',
+    question: 'Processamento e Resposta a Estímulos Sonoro-Musicais',
     type: 'multiple',
     options: [
-      'Hipersensibilidade a sons',
-      'Busca estímulos sonoros',
-      'Demonstra prazer com música',
-      'Apresenta medo de sons específicos',
-      'Responde a chamados',
-      'Localiza fonte sonora'
+      'Hipersensibilidade Auditiva',
+      'Busca Ativa por Estímulos Sonoros',
+      'Responsividade Musical Positiva',
+      'Aversão a Estímulos Sonoros Específicos',
+      'Resposta ao Chamado Nominal',
+      'Localização de Fonte Sonora'
     ],
     category: 'historia_musical'
   },
@@ -95,29 +95,29 @@ export const ANAMNESE_QUESTIONS: AnamneseQuestion[] = [
   // Desenvolvimento
   {
     id: 'desenvolvimento_motor',
-    question: 'Desenvolvimento Motor',
+    question: 'Desenvolvimento Neuropsicomotor',
     type: 'multiple',
     options: [
-      'Controle cervical',
-      'Sentar sem apoio',
-      'Engatinhar',
-      'Marcha independente',
-      'Coordenação motora fina',
-      'Coordenação motora grossa'
+      'Controle Cervical Estabelecido',
+      'Sedestação Independente',
+      'Padrão de Engatinhar',
+      'Deambulação Autônoma',
+      'Desenvolvimento da Motricidade Fina',
+      'Desenvolvimento da Motricidade Ampla'
     ],
     category: 'desenvolvimento'
   },
   {
     id: 'desenvolvimento_linguagem',
-    question: 'Desenvolvimento da Linguagem',
+    question: 'Desenvolvimento da Linguagem e Comunicação',
     type: 'multiple',
     options: [
-      'Balbucios',
-      'Primeiras palavras',
-      'Frases simples',
-      'Comunicação não-verbal',
-      'Ecolalia',
-      'Ausência de fala'
+      'Produção de Balbucios',
+      'Aquisição das Primeiras Palavras',
+      'Construção de Frases Simples',
+      'Comunicação Não-Verbal Funcional',
+      'Presença de Ecolalia',
+      'Ausência de Linguagem Verbal'
     ],
     category: 'desenvolvimento'
   },
@@ -125,29 +125,29 @@ export const ANAMNESE_QUESTIONS: AnamneseQuestion[] = [
   // Comportamento
   {
     id: 'comportamento_social',
-    question: 'Comportamento Social',
+    question: 'Aspectos Sociointeracionais',
     type: 'multiple',
     options: [
-      'Contato visual',
-      'Interação com pares',
-      'Brincadeira compartilhada',
-      'Isolamento social',
-      'Comportamentos repetitivos',
-      'Interesses restritos'
+      'Estabelecimento de Contato Visual',
+      'Interação Social com Pares',
+      'Engajamento em Brincadeiras Compartilhadas',
+      'Padrão de Isolamento Social',
+      'Comportamentos Estereotipados',
+      'Padrões de Interesse Restritos'
     ],
     category: 'comportamento'
   },
   {
     id: 'regulacao_emocional',
-    question: 'Regulação Emocional',
+    question: 'Regulação Socioemocional',
     type: 'multiple',
     options: [
-      'Irritabilidade',
-      'Ansiedade',
-      'Agressividade',
-      'Choro frequente',
-      'Mudanças bruscas de humor',
-      'Dificuldade em lidar com frustrações'
+      'Manifestações de Irritabilidade',
+      'Quadro de Ansiedade',
+      'Comportamentos Heteroagressivos',
+      'Episódios de Choro Frequente',
+      'Labilidade Emocional',
+      'Baixa Tolerância à Frustração'
     ],
     category: 'comportamento'
   },
@@ -155,35 +155,35 @@ export const ANAMNESE_QUESTIONS: AnamneseQuestion[] = [
   // Saúde
   {
     id: 'diagnosticos',
-    question: 'Diagnósticos',
+    question: 'Diagnósticos Clínicos',
     type: 'multiple',
     options: [
-      'TEA',
-      'TDAH',
+      'Transtorno do Espectro do Autismo',
+      'Transtorno do Déficit de Atenção/Hiperatividade',
       'Síndrome de Down',
-      'Paralisia Cerebral',
+      'Encefalopatia Crônica Não Progressiva',
       'Deficiência Intelectual',
       'Transtornos de Ansiedade',
-      'Outros'
+      'Outros Diagnósticos'
     ],
     category: 'saude'
   },
   {
     id: 'medicamentos',
-    question: 'Medicamentos em Uso',
+    question: 'Terapêutica Medicamentosa',
     type: 'text',
     category: 'saude'
   },
   {
     id: 'outros_tratamentos',
-    question: 'Outros Tratamentos',
+    question: 'Acompanhamentos Terapêuticos',
     type: 'multiple',
     options: [
-      'Fonoaudiologia',
+      'Terapia Fonoaudiológica',
       'Terapia Ocupacional',
-      'Psicologia',
+      'Acompanhamento Psicológico',
       'Fisioterapia',
-      'Psicopedagogia',
+      'Intervenção Psicopedagógica',
       'Equoterapia'
     ],
     category: 'saude'
@@ -192,10 +192,10 @@ export const ANAMNESE_QUESTIONS: AnamneseQuestion[] = [
   // Social
   {
     id: 'escolaridade',
-    question: 'Escolaridade',
+    question: 'Inserção Escolar',
     type: 'single',
     options: [
-      'Não frequenta escola',
+      'Não Inserido em Ambiente Escolar',
       'Educação Infantil',
       'Ensino Fundamental I',
       'Ensino Fundamental II',
@@ -224,4 +224,4 @@ export interface AnamneseFormData {
   observacoes?: string
   createdAt?: Date
   updatedAt?: Date
-} 
+}

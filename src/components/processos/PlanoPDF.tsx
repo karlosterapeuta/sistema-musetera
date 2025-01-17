@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Script from 'next/script'
 import { PlanoTerapeutico } from '@/types/plano'
+import html2canvas from 'html2canvas'
 
 interface PlanoPDFProps {
   plano: PlanoTerapeutico
@@ -22,10 +23,11 @@ export function PlanoPDF({ plano, paciente, objetivosSelecionados, onClose }: Pl
   const [isReady, setIsReady] = useState(false)
   const [scriptsLoaded, setScriptsLoaded] = useState({
     jspdf: false,
-    autotable: false
+    autotable: false,
+    html2canvas: false
   })
 
-  const handleScriptsLoad = (scriptName: 'jspdf' | 'autotable') => {
+  const handleScriptsLoad = (scriptName: 'jspdf' | 'autotable' | 'html2canvas') => {
     setScriptsLoaded(prev => ({
       ...prev,
       [scriptName]: true
@@ -34,12 +36,12 @@ export function PlanoPDF({ plano, paciente, objetivosSelecionados, onClose }: Pl
 
   useEffect(() => {
     // Verifica se ambos os scripts foram carregados
-    if (scriptsLoaded.jspdf && scriptsLoaded.autotable) {
+    if (scriptsLoaded.jspdf && scriptsLoaded.autotable && scriptsLoaded.html2canvas) {
       setIsReady(true)
     }
   }, [scriptsLoaded])
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
     // Verificação mais robusta dos scripts
     if (typeof window !== 'undefined') {
       // Importar scripts dinamicamente se não estiverem disponíveis
@@ -54,7 +56,7 @@ export function PlanoPDF({ plano, paciente, objetivosSelecionados, onClose }: Pl
         })
       }
 
-      const generatePDFContent = () => {
+      const generatePDFContent = async () => {
         try {
           // @ts-ignore
           const jsPDF = window.jspdf.jsPDF
@@ -63,28 +65,46 @@ export function PlanoPDF({ plano, paciente, objetivosSelecionados, onClose }: Pl
           
           const doc = new jsPDF()
 
+          // Captura a logo existente na página
+          const logoElement = document.querySelector('img[alt="Logo Musicoterapia"]') as HTMLImageElement
+          if (logoElement) {
+            const canvas = document.createElement('canvas')
+            canvas.width = logoElement.naturalWidth
+            canvas.height = logoElement.naturalHeight
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+              ctx.drawImage(logoElement, 0, 0)
+              try {
+                const imgData = canvas.toDataURL('image/png')
+                doc.addImage(imgData, 'PNG', 15, 10, 25, 25)
+              } catch (error) {
+                console.error('Erro ao adicionar logo:', error)
+              }
+            }
+          }
+
           // Título
           doc.setFontSize(20)
-          doc.text('Plano Terapêutico Musicoterapêutico', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' })
+          doc.text('Plano Terapêutico Musicoterapêutico', doc.internal.pageSize.getWidth() / 2, 45, { align: 'center' })
 
           // Identificação do Paciente
           doc.setFontSize(16)
-          doc.text('Identificação do Paciente', 20, 40)
+          doc.text('Identificação do Paciente', 20, 65)
           
           doc.setFontSize(12)
-          doc.text(`Nome: ${paciente.nome}`, 20, 50)
-          doc.text(`Idade: ${paciente.idade} anos`, 20, 57)
-          doc.text(`Diagnóstico: ${paciente.diagnostico}`, 20, 64)
-          doc.text(`Data de Início: ${new Date(plano.identificacao.dataInicio).toLocaleDateString('pt-BR')}`, 20, 71)
+          doc.text(`Nome: ${paciente.nome}`, 20, 75)
+          doc.text(`Idade: ${paciente.idade} anos`, 20, 82)
+          doc.text(`Diagnóstico: ${paciente.diagnostico}`, 20, 89)
+          doc.text(`Data de Início: ${new Date(plano.identificacao.dataInicio).toLocaleDateString('pt-BR')}`, 20, 96)
           if (plano.identificacao.dataReavaliacao) {
-            doc.text(`Reavaliação: ${new Date(plano.identificacao.dataReavaliacao).toLocaleDateString('pt-BR')}`, 20, 78)
+            doc.text(`Reavaliação: ${new Date(plano.identificacao.dataReavaliacao).toLocaleDateString('pt-BR')}`, 20, 103)
           }
 
           // Objetivos Terapêuticos
           doc.setFontSize(16)
-          doc.text('Objetivos Terapêuticos', 20, 95)
+          doc.text('Objetivos Terapêuticos', 20, 120)
 
-          let yPos = 105
+          let yPos = 130
           doc.setFontSize(12)
           objetivosSelecionados.forEach((objetivo) => {
             const objetivoText = `• ${objetivo.texto}`
@@ -152,13 +172,14 @@ export function PlanoPDF({ plano, paciente, objetivosSelecionados, onClose }: Pl
       }
 
       // Verificar se os scripts já estão carregados
-      if (window.jspdf && window.jspdf.jsPDF && window.jspdf.autoTable) {
-        generatePDFContent()
+      if (window.jspdf && window.jspdf.jsPDF && window.jspdf.autoTable && window.html2canvas) {
+        await generatePDFContent()
       } else {
         // Carregar scripts e gerar PDF
-        Promise.all([
+        await Promise.all([
           loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),
-          loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js')
+          loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js'),
+          loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js')
         ])
         .then(() => {
           generatePDFContent()
@@ -182,6 +203,10 @@ export function PlanoPDF({ plano, paciente, objetivosSelecionados, onClose }: Pl
       <Script 
         src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js" 
         onLoad={() => handleScriptsLoad('autotable')}
+      />
+      <Script 
+        src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" 
+        onLoad={() => handleScriptsLoad('html2canvas')}
       />
 
       <div className="flex justify-between items-center">

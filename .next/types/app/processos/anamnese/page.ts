@@ -1,4 +1,4 @@
-// File: C:\Users\karlos\Desktop\tera\src\app\processos\anamnese\page.tsx
+// File: /Users/karlosmusicoterapeuta/Desktop/tera/src/app/processos/anamnese/page.tsx
 import * as entry from '../../../../../src/app/processos/anamnese/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
