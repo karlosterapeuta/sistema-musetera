@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth'
-import type { AuthOptions } from 'next-auth'
+import type { AuthOptions, Session, User } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
@@ -7,19 +7,22 @@ import bcrypt from 'bcryptjs'
 export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
+      id: 'credentials',
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' }
       },
-      async authorize(credentials) {
-        try {
-          if (!credentials?.email || !credentials?.password) {
-            return null
-          }
+      async authorize(credentials): Promise<User | null> {
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
 
+        try {
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
+            where: {
+              email: credentials.email.toLowerCase().trim()
+            },
             select: {
               id: true,
               email: true,
@@ -28,12 +31,16 @@ export const authOptions: AuthOptions = {
             }
           })
 
-          if (!user || !user.password) {
+          if (!user?.password) {
             return null
           }
 
-          const isValid = await bcrypt.compare(credentials.password, user.password)
-          if (!isValid) {
+          const isValidPassword = await bcrypt.compare(
+            credentials.password,
+            user.password
+          )
+
+          if (!isValidPassword) {
             return null
           }
 
@@ -48,30 +55,36 @@ export const authOptions: AuthOptions = {
       }
     })
   ],
+  pages: {
+    signIn: '/auth'
+  },
   session: {
     strategy: 'jwt',
-    maxAge: 8 * 60 * 60 // 8 hours
+    maxAge: 24 * 60 * 60 // 24 hours
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.email = user.email
-        token.professionalRegister = user.professionalRegister
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          professionalRegister: user.professionalRegister
+        }
       }
       return token
     },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id
-        session.user.email = token.email
-        session.user.professionalRegister = token.professionalRegister
+    async session({ session, token }): Promise<Session> {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+          email: token.email as string,
+          professionalRegister: token.professionalRegister as string
+        }
       }
-      return session
     }
-  },
-  pages: {
-    signIn: '/auth'
   },
   secret: process.env.NEXTAUTH_SECRET
 }
