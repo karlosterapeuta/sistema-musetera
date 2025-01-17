@@ -6,32 +6,17 @@ export default withAuth(
     const isAuth = !!req.nextauth.token
     const path = req.nextUrl.pathname
 
-    // Limitar o tamanho da URL
-    if (req.nextUrl.toString().length > 2000) {
-      return new NextResponse('URI Too Long', { status: 414 })
-    }
-
-    // Permitir acesso a rotas públicas sem redirecionamento
-    if (path === '/auth' || path === '/cadastro') {
-      return isAuth 
-        ? NextResponse.redirect(new URL('/dashboard', req.url))
-        : NextResponse.next()
-    }
-
-    // Se não estiver autenticado, redireciona para /auth
-    if (!isAuth) {
-      return NextResponse.redirect(new URL('/auth', req.url))
-    }
-
-    // Se estiver autenticado e tentar acessar /auth ou /cadastro, redireciona para /dashboard
-    if (isAuth && (path === '/auth' || path === '/cadastro')) {
+    // Se estiver na página de login e autenticado, vai para dashboard
+    if (path === '/auth' && isAuth) {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 
-    // Add response headers
-    const response = NextResponse.next()
-    response.headers.set('Cache-Control', 'no-store, max-age=0')
-    return response
+    // Se não estiver autenticado e tentar acessar uma rota protegida, vai para login
+    if (!isAuth && path !== '/auth') {
+      return NextResponse.redirect(new URL('/auth', req.url))
+    }
+
+    return NextResponse.next()
   },
   {
     callbacks: {
@@ -45,7 +30,6 @@ export const config = {
     '/dashboard/:path*',
     '/patients/:path*',
     '/auth',
-    '/cadastro',
     '/relatorios/:path*'
   ]
 }
