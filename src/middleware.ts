@@ -3,23 +3,31 @@ import { NextResponse } from 'next/server'
 
 export default withAuth(
   function middleware(req) {
-    const token = req.nextauth.token
-    const isAuth = !!token
-    const isAuthPage = req.nextUrl.pathname.startsWith('/auth')
-    const isRegisterPage = req.nextUrl.pathname.startsWith('/cadastro')
+    const isAuth = !!req.nextauth.token
+    const path = req.nextUrl.pathname
 
-    if (isAuthPage || isRegisterPage) {
-      if (isAuth) {
-        return NextResponse.redirect(new URL('/dashboard', req.url))
-      }
-      return null
+    if (path.startsWith('/auth') || path.startsWith('/cadastro')) {
+      return isAuth 
+        ? NextResponse.redirect(new URL('/dashboard', req.url), {
+            headers: {
+              'Cache-Control': 'no-store, max-age=0',
+            },
+          })
+        : null
     }
 
     if (!isAuth) {
-      return NextResponse.redirect(
-        new URL('/auth', req.url)
-      )
+      return NextResponse.redirect(new URL('/auth', req.url), {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+        },
+      })
     }
+
+    // Add response headers
+    const response = NextResponse.next()
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
+    return response
   },
   {
     callbacks: {

@@ -14,38 +14,27 @@ const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Email e senha são obrigatórios')
+          return null
         }
 
         const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
-          },
+          where: { email: credentials.email },
           select: {
             id: true,
             email: true,
-            name: true,
             password: true,
             professionalRegister: true
           }
         })
 
-        if (!user || !user.password) {
-          console.log('Usuário não encontrado:', credentials.email)
-          return null
-        }
+        if (!user?.password) return null
 
         const isValid = await bcrypt.compare(credentials.password, user.password)
-
-        if (!isValid) {
-          console.log('Senha inválida para o usuário:', credentials.email)
-          return null
-        }
+        if (!isValid) return null
 
         return {
           id: user.id,
           email: user.email,
-          name: user.name,
           professionalRegister: user.professionalRegister
         }
       }
@@ -56,16 +45,16 @@ const authOptions: AuthOptions = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 8 * 60 * 60 // 8 hours
   },
   cookies: {
     sessionToken: {
-      name: '__Secure-next-auth.session-token',
+      name: 'next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: true
+        secure: process.env.NODE_ENV === 'production'
       }
     }
   },
@@ -74,6 +63,8 @@ const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id
         token.professionalRegister = user.professionalRegister
+        delete token.name
+        delete token.picture
       }
       return token
     },
@@ -81,6 +72,8 @@ const authOptions: AuthOptions = {
       if (session.user) {
         session.user.id = token.id as string
         session.user.professionalRegister = token.professionalRegister as string
+        delete session.user.name
+        delete session.user.image
       }
       return session
     }
