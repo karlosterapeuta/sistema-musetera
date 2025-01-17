@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "./build.sh",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "clean": "rm -rf .next node_modules/.cache",
+    "prod-start": "next start -p $PORT"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
