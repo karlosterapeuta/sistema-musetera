@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { Logo } from '@/components/Logo'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams?.get('from') || '/dashboard'
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -38,16 +40,20 @@ export default function LoginPage() {
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
-        redirect: false
+        redirect: false,
+        callbackUrl: `${window.location.origin}${callbackUrl}`
       })
 
       if (result?.error) {
+        console.error('Erro de autenticação:', result.error)
         setError('Email ou senha inválidos')
-      } else {
-        router.push('/dashboard')
+      } else if (result?.ok) {
+        router.push(callbackUrl)
+        router.refresh()
       }
     } catch (err) {
-      setError('Ocorreu um erro ao fazer login')
+      console.error('Erro ao fazer login:', err)
+      setError('Ocorreu um erro ao fazer login. Tente novamente.')
     } finally {
       setLoading(false)
     }
