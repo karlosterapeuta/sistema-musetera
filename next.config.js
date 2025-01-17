@@ -4,7 +4,7 @@ const nextConfig = {
     domains: ['jztbkimlcrfndooyhohg.supabase.co'],
     unoptimized: true,
   },
-  transpilePackages: ['react-big-calendar', 'moment'],
+  transpilePackages: ['react-big-calendar'],
   typescript: {
     ignoreBuildErrors: true
   },
@@ -12,7 +12,7 @@ const nextConfig = {
     ignoreDuringBuilds: true
   },
   experimental: {
-    esmExternals: 'loose'
+    esmExternals: true
   },
   output: 'standalone',
   poweredByHeader: false,
@@ -22,6 +22,10 @@ const nextConfig = {
       ...config.resolve.fallback,
       fs: false,
     };
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': './src'
+    }
     return config;
   },
 }
