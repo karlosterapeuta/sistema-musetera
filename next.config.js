@@ -4,6 +4,7 @@ const nextConfig = {
     domains: ['jztbkimlcrfndooyhohg.supabase.co'],
     unoptimized: true,
   },
+  transpilePackages: ['react-big-calendar', 'moment'],
   typescript: {
     ignoreBuildErrors: true
   },
@@ -11,8 +12,11 @@ const nextConfig = {
     ignoreDuringBuilds: true
   },
   experimental: {
-    serverActions: true,
+    esmExternals: 'loose'
   },
+  output: 'standalone',
+  poweredByHeader: false,
+  compress: true,
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
