@@ -13,7 +13,9 @@
     "prod-start": "next start -p $PORT",
     "netlify-build": "./netlify-build.sh",
     "netlify-dev": "netlify dev",
-    "netlify-deploy": "netlify deploy --prod"
+    "netlify-deploy": "netlify deploy --prod",
+    "render-build": "./render-build.sh",
+    "render-start": "next start -p $PORT"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

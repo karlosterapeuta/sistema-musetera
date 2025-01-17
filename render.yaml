@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: sistema-musetera
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.10.0
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - src/**/*.ts
+        - src/**/*.tsx
+        - prisma/**/*.prisma
+        - package.json
+        - next.config.js
