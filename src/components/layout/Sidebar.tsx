@@ -11,7 +11,6 @@ import {
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
 import { useSidebar } from '@/contexts/SidebarContext'
 
 const navigation = [
@@ -57,6 +56,30 @@ export function Sidebar() {
 
   const isActive = (href: string) => {
     return pathname === href || pathname.startsWith(`${href}/`)
+  }
+
+  const getItemClass = (isActiveItem: boolean) => {
+    return `group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
+      isActiveItem
+        ? 'bg-gray-50 text-indigo-600'
+        : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+    }`
+  }
+
+  const getIconClass = (isActiveItem: boolean) => {
+    return `h-6 w-6 shrink-0 ${
+      isActiveItem
+        ? 'text-indigo-600'
+        : 'text-gray-400 group-hover:text-indigo-600'
+    }`
+  }
+
+  const getChildClass = (isActiveItem: boolean) => {
+    return `block rounded-md py-2 pr-2 pl-9 text-sm leading-6 ${
+      isActiveItem
+        ? 'bg-gray-50 text-indigo-600'
+        : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+    }`
   }
 
   return (
@@ -110,21 +133,11 @@ export function Sidebar() {
                           {item.href ? (
                             <Link
                               href={item.href}
-                              className={cn(
-                                isActive(item.href)
-                                  ? 'bg-gray-50 text-indigo-600'
-                                  : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                                'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                              )}
+                              className={getItemClass(isActive(item.href))}
                               onClick={close}
                             >
                               <item.icon
-                                className={cn(
-                                  isActive(item.href)
-                                    ? 'text-indigo-600'
-                                    : 'text-gray-400 group-hover:text-indigo-600',
-                                  'h-5 w-5 sm:h-6 sm:w-6 shrink-0'
-                                )}
+                                className={getIconClass(isActive(item.href))}
                                 aria-hidden="true"
                               />
                               <span className="text-xs sm:text-sm">{item.name}</span>
@@ -132,7 +145,7 @@ export function Sidebar() {
                           ) : (
                             <div className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700">
                               <item.icon
-                                className="h-5 w-5 sm:h-6 sm:w-6 shrink-0 text-gray-400"
+                                className="h-6 w-6 shrink-0 text-gray-400"
                                 aria-hidden="true"
                               />
                               <span className="text-xs sm:text-sm">{item.name}</span>
@@ -144,12 +157,7 @@ export function Sidebar() {
                                 <li key={child.name}>
                                   <Link
                                     href={child.href}
-                                    className={cn(
-                                      isActive(child.href)
-                                        ? 'bg-gray-50 text-indigo-600'
-                                        : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                                      'block rounded-md py-1 sm:py-2 pr-2 pl-6 sm:pl-9 text-xs sm:text-sm leading-6'
-                                    )}
+                                    className={getChildClass(isActive(child.href))}
                                     onClick={close}
                                   >
                                     {child.name}
@@ -177,7 +185,7 @@ export function Sidebar() {
           onClick={toggle}
         >
           <span className="sr-only">Abrir menu</span>
-          <Bars3Icon className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
+          <Bars3Icon className="h-6 w-6" aria-hidden="true" />
         </button>
         <div className="flex-1 text-xs sm:text-sm font-semibold leading-6 text-gray-900">
           MuseTera
@@ -215,20 +223,10 @@ export function Sidebar() {
                         {item.href ? (
                           <Link
                             href={item.href}
-                            className={cn(
-                              isActive(item.href)
-                                ? 'bg-gray-50 text-indigo-600'
-                                : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                            )}
+                            className={getItemClass(isActive(item.href))}
                           >
                             <item.icon
-                              className={cn(
-                                isActive(item.href)
-                                  ? 'text-indigo-600'
-                                  : 'text-gray-400 group-hover:text-indigo-600',
-                                'h-6 w-6 shrink-0'
-                              )}
+                              className={getIconClass(isActive(item.href))}
                               aria-hidden="true"
                             />
                             {item.name}
@@ -248,12 +246,7 @@ export function Sidebar() {
                               <li key={child.name}>
                                 <Link
                                   href={child.href}
-                                  className={cn(
-                                    isActive(child.href)
-                                      ? 'bg-gray-50 text-indigo-600'
-                                      : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
-                                    'block rounded-md py-2 pr-2 pl-9 text-sm leading-6'
-                                  )}
+                                  className={getChildClass(isActive(child.href))}
                                 >
                                   {child.name}
                                 </Link>
