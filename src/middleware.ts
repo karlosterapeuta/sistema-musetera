@@ -11,22 +11,21 @@ export default withAuth(
       return new NextResponse('URI Too Long', { status: 414 })
     }
 
-    if (path.startsWith('/auth') || path.startsWith('/cadastro')) {
+    // Permitir acesso a rotas públicas sem redirecionamento
+    if (path === '/auth' || path === '/cadastro') {
       return isAuth 
-        ? NextResponse.redirect(new URL('/dashboard', req.url), {
-            headers: {
-              'Cache-Control': 'no-store, max-age=0',
-            },
-          })
-        : null
+        ? NextResponse.redirect(new URL('/dashboard', req.url))
+        : NextResponse.next()
     }
 
+    // Se não estiver autenticado, redireciona para /auth
     if (!isAuth) {
-      return NextResponse.redirect(new URL('/auth', req.url), {
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      })
+      return NextResponse.redirect(new URL('/auth', req.url))
+    }
+
+    // Se estiver autenticado e tentar acessar /auth ou /cadastro, redireciona para /dashboard
+    if (isAuth && (path === '/auth' || path === '/cadastro')) {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 
     // Add response headers
