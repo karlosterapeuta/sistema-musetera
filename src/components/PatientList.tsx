@@ -1,20 +1,49 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Patient } from '@/types/database.types'
 import { PlusIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 
-interface PatientListProps {
-  patients: Patient[]
+interface Patient {
+  id: string
+  name: string
+  email: string | null
+  phone: string | null
+  status: string
 }
 
-export default function PatientList({ patients }: PatientListProps) {
+export default function PatientList() {
+  const [patients, setPatients] = useState<Patient[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+
+  useEffect(() => {
+    async function fetchPatients() {
+      try {
+        const response = await fetch('/api/patients')
+        if (!response.ok) {
+          throw new Error('Failed to fetch patients')
+        }
+        const data = await response.json()
+        setPatients(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load patients')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPatients()
+  }, [])
 
   const filteredPatients = patients.filter(patient =>
     patient.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  if (isLoading) return <div>Carregando pacientes...</div>
+  if (error) return <div>Error: {error}</div>
+  if (!patients.length) return <div>Nenhum paciente encontrado.</div>
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,35 +66,39 @@ export default function PatientList({ patients }: PatientListProps) {
       </div>
 
       {/* Lista de pacientes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredPatients.map((patient) => (
-          <Link
-            key={patient.id}
-            href={`/patients/${patient.id}`}
-            className="block p-4 border rounded-lg hover:border-blue-500 transition-colors hover:shadow-sm"
-          >
-            <div className="flex items-center gap-3">
-              <UserCircleIcon className="w-8 sm:w-10 h-8 sm:h-10 text-gray-400" />
-              <div>
-                <h3 className="font-semibold text-sm sm:text-base">{patient.name}</h3>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  {new Date(patient.date_of_birth).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-            <div className="mt-2">
-              <span className={`
-                text-xs sm:text-sm 
-                px-2 py-1 rounded-full 
-                ${patient.status === 'active' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-gray-100 text-gray-800'}
-              `}>
-                {patient.status === 'active' ? 'Ativo' : 'Inativo'}
-              </span>
-            </div>
-          </Link>
-        ))}
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefone</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredPatients.map((patient) => (
+              <tr key={patient.id}>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.email || '-'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.phone || '-'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    patient.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {patient.status === 'active' ? 'Ativo' : 'Inativo'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <Link href={`/patients/${patient.id}`} className="text-indigo-600 hover:text-indigo-900">
+                    Ver detalhes
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Mensagem quando não há resultados */}

@@ -1,13 +1,23 @@
-import { getPatients } from '@/lib/api'
-import PatientList from '@/components/PatientList'
+'use client'
 
-export default async function PatientsPage() {
-  const patients = await getPatients()
+import { useEffect, useState } from 'react'
+import { PatientList } from '@/components/PatientList'
+
+export default function PatientsPage() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    setIsLoading(false)
+  }, [])
+
+  if (isLoading) {
+    return <div>Carregando...</div>
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Pacientes</h1>
-      <PatientList patients={patients} />
+      <h1 className="text-2xl font-bold mb-6">Pacientes</h1>
+      <PatientList />
     </div>
   )
 }
