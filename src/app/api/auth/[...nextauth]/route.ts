@@ -38,13 +38,14 @@ const authOptions: AuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          name: user.name
+          name: user.name,
+          professionalRegister: user.professionalRegister
         }
       }
     })
   ],
   pages: {
-    signIn: '/'
+    signIn: '/auth'
   },
   session: {
     strategy: 'jwt',
@@ -54,17 +55,20 @@ const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.professionalRegister = user.professionalRegister
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string
+        session.user.professionalRegister = token.professionalRegister as string
       }
       return session
     }
   },
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true
 }
 
 const handler = NextAuth(authOptions)

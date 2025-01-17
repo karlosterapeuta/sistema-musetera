@@ -1,15 +1,44 @@
 import { withAuth } from 'next-auth/middleware'
+import { NextResponse } from 'next/server'
 
-export default withAuth({
-  pages: {
-    signIn: '/'
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token
+    const isAuth = !!token
+    const isAuthPage = req.nextUrl.pathname.startsWith('/auth')
+    const isRegisterPage = req.nextUrl.pathname.startsWith('/cadastro')
+
+    if (isAuthPage || isRegisterPage) {
+      if (isAuth) {
+        return NextResponse.redirect(new URL('/dashboard', req.url))
+      }
+      return null
+    }
+
+    if (!isAuth) {
+      let from = req.nextUrl.pathname
+      if (req.nextUrl.search) {
+        from += req.nextUrl.search
+      }
+
+      return NextResponse.redirect(
+        new URL(`/auth?from=${encodeURIComponent(from)}`, req.url)
+      )
+    }
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token
+    }
   }
-})
+)
 
 export const config = {
   matcher: [
-    '/processos/:path*',
-    '/pacientes/:path*',
+    '/dashboard/:path*',
+    '/patients/:path*',
+    '/auth',
+    '/cadastro',
     '/relatorios/:path*'
   ]
 }
