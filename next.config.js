@@ -20,7 +20,7 @@ const nextConfig = {
   compress: true,
   distDir: '.next',
   generateEtags: true,
-  optimizeFonts: true,
+  optimizeFonts: false,
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
