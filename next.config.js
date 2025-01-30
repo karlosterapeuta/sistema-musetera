@@ -3,24 +3,28 @@ const nextConfig = {
   transpilePackages: ['react-big-calendar', 'jspdf', 'html2canvas'],
   experimental: {
     esmExternals: true,
-    largePageDataBytes: 128 * 100000,
+    // Ajustei o valor para um limite mais razoável ou você pode remover a linha se não for necessário
+    largePageDataBytes: 128 * 1000, // ou remova esta linha
   },
   images: {
     domains: ['jztbkimlcrfndooyhohg.supabase.co'],
     unoptimized: true,
   },
   typescript: {
-    ignoreBuildErrors: true
+    // Removi a configuração de ignorar erros de build, recomendável corrigir os erros ao invés de ignorá-los
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true
+    // Removi a configuração de ignorar erros do ESLint durante builds, é melhor corrigir esses erros
+    ignoreDuringBuilds: false,
   },
   output: 'standalone',
   poweredByHeader: false,
   compress: true,
   distDir: '.next',
   generateEtags: true,
-  optimizeFonts: false,
+  // Deixei o optimizeFonts como true, para melhorar o desempenho de carregamento das fontes
+  optimizeFonts: true,
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
